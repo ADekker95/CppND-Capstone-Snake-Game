@@ -1,31 +1,42 @@
 #include "game.h"
 #include <iostream>
 #include "SDL.h"
+#include <cmath>
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
-    : snake(grid_width, grid_height),
-      engine(dev()),
+Game::Game(std::size_t grid_width, std::size_t grid_height):
       random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)) {
+      random_h(0, static_cast<int>(grid_height - 1)),
+      engine(dev()),
+      {
   PlaceFood();
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
-               std::size_t target_frame_duration) {
+               std::size_t target_frame_duration, int nSnakes) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
   Uint32 frame_end;
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
-
-  while (running) {
+  
+  // initialize snakes at random position in grid
+  for (size_t ns = 0; ns < nSnakes; ns++)
+  {
+  	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
+  }
+  
+  int score_delta = Game::CalculateScore()
+    
+  // game stops if not running or score_delta is > 2 
+  while (running and score_delta < 2) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
+    controller.HandleInput(running, snakes);
     Update();
-    renderer.Render(snake, food);
+    score_delta = Game::UpdateScore();
+    renderer.Render(snakes, food);
 
     frame_end = SDL_GetTicks();
 
@@ -57,31 +68,50 @@ void Game::PlaceFood() {
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing
     // food.
-    if (!snake.SnakeCell(x, y)) {
-      food.x = x;
-      food.y = y;
-      return;
+    // TODO should we use smart pointer here?
+    for (s:snakes) {
+      if (!s.SnakeCell(x, y)) {
+        food.x = x;
+        food.y = y;
+        return;
+      }
     }
   }
 }
 
+int Game::CalcScoreDelta() {
+	return abs(snakes[0].score - snakes[1].score)  
+} 
 void Game::Update() {
-  if (!snake.alive) return;
+  // if any of the snakes is dead return
+  for (s:snakes) {
+    if (!s.alive) return;
 
-  snake.Update();
+    s.Update();
 
-  int new_x = static_cast<int>(snake.head_x);
-  int new_y = static_cast<int>(snake.head_y);
+    int new_x = static_cast<int>(s.head_x);
+    int new_y = static_cast<int>(s.head_y);
 
-  // Check if there's food over here
-  if (food.x == new_x && food.y == new_y) {
-    score++;
-    PlaceFood();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
+    // Check if there's food over here
+    if (food.x == new_x && food.y == new_y) {
+      score++;
+      // Grow snake and increase speed.
+      s.GrowBody();
+      s.speed += 0.02;
+    }
   }
+  // we want only one food piece for all the snakes per update
+  PlaceFood();  
+}
+                    
+bool CompareScore(a,b){
+	return (a.score < b.score);	
 }
 
-int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+// Return index of winning snake 
+int Game::GetIndexWinningSnake() const { 
+  return std::max_element(snakes.begin(), snakes.end(), CompareScore);
+}
+                    
+int Game::GetScoreWinningSnake(int index) const { return snakes[index].score; }
+int Game::GetSizeWinningSnake(int index) const { return snakes[index].size; }
