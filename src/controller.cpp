@@ -11,13 +11,22 @@ void Controller::ChangeDirection(Snake &snake, Snake::Direction input,
 
 void Controller::HandleInput(bool &running, std::vector<<Snake>> &snakes) const {
   SDL_Event e;
+  // TODO NOT ELEGANT BUT HOW TO SOLVE THIS
+  control_set_snake1.insert(SDLK_UP);
+  control_set_snake1.insert(SDLK_DOWN);
+  control_set_snake1.insert(SDLK_RIGHT);
+  control_set_snake1.insert(SDLK_LEFT);
+  control_set_snake2.insert(SDLK_w);
+  control_set_snake2.insert(SDLK_a);
+  control_set_snake2.insert(SDLK_s);
+  control_set_snake2.insert(SDLK_d);
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
       running = false;
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         // determine snake, arrows for snake 1, wasd for snake 2
-        if (e.key.keysym.sym in ControlKeys1){
+        if (control_set_snake1.count(e.key.keysym.sym)){
           snake = snakes[0]
         else: 
           snake = snakes[1]
