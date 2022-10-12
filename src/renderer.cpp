@@ -1,6 +1,9 @@
 #include "renderer.h"
+#include "game.h"
+#include "snake.h"
 #include <iostream>
 #include <string>
+
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -38,7 +41,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(std::vector<Snake> snakes, SDL_Point const &food) {
+void Renderer::Render(std::vector<Snake> const snakes, SDL_Point const &food) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
