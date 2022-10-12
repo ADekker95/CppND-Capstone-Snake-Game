@@ -16,6 +16,7 @@ class Game {
   int GetIndexWinningSnake();
   int GetScoreWinningSnake(int index) const;
   int GetSizeWinningSnake(int index) const;
+  int CalculateScoreDelta();
 
  private:
   std::vector<Snake> snakes;
