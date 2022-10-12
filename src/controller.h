@@ -2,25 +2,16 @@
 #define CONTROLLER_H
 
 #include "snake.h"
-
-// keys to manage snake 1
-enum ControlKeys1 {
-  SDLK_UP,
-  SDLK_DOWN,
-  SDLK_LEFT,
-  SDLK_RIGHT  
-} 
-
-// keys to manage snake 2
-enum ControlKeys2 {
-  SDLK_w,
-  SDLK_a,
-  SDLK_s,
-  SDLK_d
-}
+#include "SDL.h"
+#include <set>
 
 class Controller {
  public:
+  // TODO how to initialize these sets more elegantly
+  // keys to manage snake 1
+  std::set<SDL_Keycode> control_set_snake1; // ({SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT});
+  // keys to manage snake 2
+  std::set<SDL_Keycode> control_set_snake2; // ({SDLK_w, SDLK_a, SDLK_s, SDLK_d}); 
   void HandleInput(bool &running, Snake &snake) const;
 
  private:
