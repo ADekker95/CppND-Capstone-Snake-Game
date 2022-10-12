@@ -3,11 +3,10 @@
 #include "SDL.h"
 #include <cmath>
 
-Game::Game(std::size_t grid_width, std::size_t grid_height):
-      random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)),
-      engine(dev()),
-      {
+Game::Game(std::size_t grid_width, std::size_t grid_height)
+  : random_w(0, static_cast<int>(grid_width - 1)),
+    random_h(0, static_cast<int>(grid_height - 1)),
+    engine(dev()) {
   PlaceFood();
 }
 
@@ -26,7 +25,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
   }
   
-  int score_delta = Game::CalculateScore()
+  int score_delta = Game::CalculateScoreDelta()
     
   // game stops if not running or score_delta is > 2 
   while (running and score_delta < 2) {
@@ -79,7 +78,7 @@ void Game::PlaceFood() {
   }
 }
 
-int Game::CalcScoreDelta() {
+int Game::CalculateScoreDelta() {
 	return abs(snakes[0].score - snakes[1].score)  
 } 
 void Game::Update() {
