@@ -34,7 +34,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snakes);
     Update();
-    score_delta = Game::UpdateScore();
+    score_delta = Game::CalculateScoreDelta();
     renderer.Render(snakes, food);
 
     frame_end = SDL_GetTicks();
