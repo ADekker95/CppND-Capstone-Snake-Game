@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "game.h"
 #include "renderer.h"
+#include <vector>
 
 int main() {
   constexpr std::size_t kFramesPerSecond{60};
@@ -12,10 +13,13 @@ int main() {
   constexpr std::size_t kGridHeight{32};
 
   int nSnakes = 2;
+  
   Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
-  Controller controller;
-  Game game(kGridWidth, kGridHeight);
-  game.Run(controller, renderer, kMsPerFrame, nSnakes);
+  // we need separate keys to control the snakes 
+  std::vector<Controller> controllers(Controller(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT), Controller(SDLK_w, SDLK_a, SDLK_s, SDLK_d));
+  
+  Game game(kGridWidth, kGridHeight, nSnakes);
+  game.Run(controllers, renderer, kMsPerFrame, &nSnakes);
   std::cout << "Game has terminated successfully!\n";
   // determine winning snake 
   int snakeIndex = game.GetIndexWinningSnake();
