@@ -9,11 +9,9 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height);
-  void Run(Controller const &controller, Renderer &renderer,
-           std::size_t target_frame_duration, int nSnakes);
-  bool CompareScore(int a, int b); 
-  int GetIndexWinningSnake();
+  Game(std::size_t grid_width, std::size_t grid_height, int nSnakes);
+  void Run(std::vector<Controller> const &controllers, Renderer &renderer, std::size_t target_frame_duration, int &nSnakes);
+  int GetIndexWinningSnake() const;
   int GetScoreWinningSnake(int index) const;
   int GetSizeWinningSnake(int index) const;
   int CalculateScoreDelta();
