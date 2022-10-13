@@ -2,16 +2,24 @@
 #include <iostream>
 #include "SDL.h"
 #include <cmath>
+#include <algorithm>
+#include <vector>
+#include "controller.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
+Game::Game(std::size_t grid_width, std::size_t grid_height, int nSnakes)
   : random_w(0, static_cast<int>(grid_width - 1)),
     random_h(0, static_cast<int>(grid_height - 1)),
     engine(dev()) {
   PlaceFood();
+  // initialize snakes at random position in grid
+  for (size_t ns = 0; ns < nSnakes; ns++)
+  {
+  	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
+  }
 }
 
-void Game::Run(Controller const &controller, Renderer &renderer,
-               std::size_t target_frame_duration, int nSnakes) {
+void Game::Run(std::vector<Controller> const &controllers, Renderer &renderer,
+               std::size_t target_frame_durationm, int &nSnakes) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
   Uint32 frame_end;
@@ -19,20 +27,17 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
   
-  // initialize snakes at random position in grid
-  for (size_t ns = 0; ns < nSnakes; ns++)
-  {
-  	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
-  }
-  
-  int score_delta = Game::CalculateScoreDelta()
+  int score_delta = Game::CalculateScoreDelta();
     
   // game stops if not running or score_delta is > 2 
   while (running and score_delta < 2) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snakes);
+    for(i; i++, i< nSnakes){
+    	controllers[i].HandleInput(running, snakes[i]);
+    }
+    
     Update();
     score_delta = Game::CalculateScoreDelta();
     renderer.Render(snakes, food);
@@ -46,7 +51,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+      // CHANGE TO SHOW SNAKE WITH HIGHEST SCORE
+      //renderer.UpdateWindowTitle(score, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -79,7 +85,7 @@ void Game::PlaceFood() {
 }
 
 int Game::CalculateScoreDelta() {
-	return abs(snakes[0].score - snakes[1].score)  
+	return abs(snakes[0].score - snakes[1].score);
 } 
 void Game::Update() {
   // if any of the snakes is dead return
@@ -93,7 +99,7 @@ void Game::Update() {
 
     // Check if there's food over here
     if (food.x == new_x && food.y == new_y) {
-      score++;
+      s.score++;
       // Grow snake and increase speed.
       s.GrowBody();
       s.speed += 0.02;
@@ -103,14 +109,14 @@ void Game::Update() {
   PlaceFood();  
 }
                     
-bool CompareScore(a,b){
-	return (a.score < b.score);	
-}
-
 // Return index of winning snake 
 int Game::GetIndexWinningSnake() const { 
-  return std::max_element(snakes.begin(), snakes.end(), CompareScore);
+   auto result = std::max_element(snakes.begin(), snakes.end(), [](const Snake &a, const Snake &b)
+        {
+          return std::abs(a.score) < std::abs(b.score);
+       });
+   return std::distance(snakes.begin(), result);
 }
-                    
+
 int Game::GetScoreWinningSnake(int index) const { return snakes[index].score; }
 int Game::GetSizeWinningSnake(int index) const { return snakes[index].size; }
