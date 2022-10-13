@@ -8,11 +8,12 @@ class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
 
-  Snake(int grid_width, int grid_height)
+  // I want to initalize the snake at a random place
+  Snake(std::size_t grid_width, std::size_t grid_height, int start_head_x, int start_head_y)
       : grid_width(grid_width),
         grid_height(grid_height),
-        head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
+        head_x(start_head_x / 2),
+        head_y(start_head_y / 2) {}
 
   void Update();
 
@@ -23,6 +24,7 @@ class Snake {
 
   float speed{0.1f};
   int size{1};
+  int score{0};
   bool alive{true};
   float head_x;
   float head_y;
