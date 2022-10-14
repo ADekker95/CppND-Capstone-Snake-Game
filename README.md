@@ -5,7 +5,7 @@ This is repo is built from the starter repo for the Capstone project in the [Uda
 <img src="snake_game.gif"/>
 
 ## Game instructions 
-In this Capstone Project, we play with (two) snakes that battle for food. If one snakes earns two points more than the other or a snake runs into itself, the game ends and the winning snake is displayed. 
+In this Capstone Project, we play with (two) snakes that battle for food. One snakes is controlled by arrows, the other via w,a,s,d. If one snakes earns two points more than the other or a snake runs into itself, the game ends and the score and size of the winning snake is displayed. 
 
 ## How 5 rubric points are satisfied:
 1. The project demonstrates an understanding of C++ functions and control structures.
