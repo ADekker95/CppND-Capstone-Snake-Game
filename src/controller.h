@@ -1,30 +1,27 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
-#include "game.h"
 #include "snake.h"
 #include "SDL.h"
-#include <set>
 
 class Controller {
  public:
+  // Connect user defined control keys to the right private variables 
   Controller(const SDL_Keycode up, const SDL_Keycode down, const SDL_Keycode left, const SDL_Keycode right):
-   	up_(up),
-    down_(down),
-    left_(left),
-    right_(right)
-    {
-    };
+      _Up(up),
+      _Down(down),
+      _Left(left),
+      _Right(right) {}
   
-  ~Controller();
   void HandleInput(bool &running, Snake &snake) const;
 
  private:
-  SDL_Keycode up_;
-  SDL_Keycode down_;
-  SDL_Keycode left_;
-  SDL_Keycode right_;
-  void ChangeDirection(Snake &snake, Snake::Direction input,
-                       Snake::Direction opposite) const;
+  void ChangeDirection(Snake &snake, Snake::Direction input, Snake::Direction opposite) const;
+  // Keys to handle directions of snake 
+  SDL_Keycode _Up;
+  SDL_Keycode _Down;
+  SDL_Keycode _Left;
+  SDL_Keycode _Right;
+  
 };
 
 #endif
