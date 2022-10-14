@@ -4,22 +4,22 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
-#include "controller.h"
+#include <thread>
 
-Game::Game(std::size_t grid_width, std::size_t grid_height, int nSnakes)
-  : random_w(0, static_cast<int>(grid_width - 1)),
+// Game constructor, initialize food and snakes at random places
+Game::Game(std::size_t grid_width, std::size_t grid_height, size_t nSnakes):
+	random_w(0, static_cast<int>(grid_width - 1)),
     random_h(0, static_cast<int>(grid_height - 1)),
     engine(dev()) {
   PlaceFood();
-  // initialize snakes at random position in grid
-  for (size_t ns = 0; ns < nSnakes; ns++)
-  {
+      
+  // initialize snakes for the game, each at random position in grid
+  for (size_t ns = 0; ns < nSnakes; ns++){
   	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
   }
 }
 
-void Game::Run(std::vector<Controller> const &controllers, Renderer &renderer,
-               std::size_t target_frame_durationm, int &nSnakes) {
+void Game::Run(Controller const &controller1, Controller const &controller2, Renderer &renderer, std::size_t target_frame_duration, int nSnakes) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
   Uint32 frame_end;
@@ -33,10 +33,23 @@ void Game::Run(std::vector<Controller> const &controllers, Renderer &renderer,
   while (running and score_delta < 2) {
     frame_start = SDL_GetTicks();
 
-    // Input, Update, Render - the main game loop.
-    for(i; i++, i< nSnakes){
-    	controllers[i].HandleInput(running, snakes[i]);
+    // Input, Update, Render - the main game loop. 
+    std::vector<std::thread> threads;
+    
+    // we need to use std::ref to pass references to a function launched in a thread 
+    for (size_t i = 0; i < nSnakes; ++i){
+      if (i == 0){
+        // use emplace back instead of push back (would create copy and we do not want that)
+        threads.emplace_back(std::thread(&Controller::HandleInput, controller1, std::ref(running), std::ref(snakes[i])));
+      }
+      else {
+        threads.emplace_back(std::thread(&Controller::HandleInput, controller2, std::ref(running), std::ref(snakes[i])));
+      }
     }
+    
+    // unite the flow of execution threads
+    for (auto &t : threads)
+        t.join();
     
     Update();
     score_delta = Game::CalculateScoreDelta();
@@ -51,8 +64,8 @@ void Game::Run(std::vector<Controller> const &controllers, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      // CHANGE TO SHOW SNAKE WITH HIGHEST SCORE
-      //renderer.UpdateWindowTitle(score, frame_count);
+      // display scores of each snake
+      renderer.UpdateWindowTitle(snakes, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -71,10 +84,8 @@ void Game::PlaceFood() {
   while (true) {
     x = random_w(engine);
     y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    // TODO should we use smart pointer here?
-    for (s:snakes) {
+    // Check that the location is not occupied by a snake item before placing food.
+    for (auto s:snakes) {
       if (!s.SnakeCell(x, y)) {
         food.x = x;
         food.y = y;
@@ -84,9 +95,11 @@ void Game::PlaceFood() {
   }
 }
 
-int Game::CalculateScoreDelta() {
+// Calculate score difference between the two scores
+int Game::CalculateScoreDelta() const {
 	return abs(snakes[0].score - snakes[1].score);
 } 
+
 void Game::Update() {
   // if any of the snakes is dead return
   for (s:snakes) {
