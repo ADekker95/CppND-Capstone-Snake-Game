@@ -1,11 +1,11 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: Capstone Snake Game: A game of (two) snakes
 
 This is repo is built from the starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
 
 <img src="snake_game.gif"/>
 
 ## Game instructions 
-In this Capstone Project, we play with two snakes that battle for food. If one snakes earns two points more than the other or a snake runs into itself, the game ends and the winning snake is displayed. 
+In this Capstone Project, we play with (two) snakes that battle for food. If one snakes earns two points more than the other or a snake runs into itself, the game ends and the winning snake is displayed. 
 
 ## How 5 rubric points are satisfied:
 1. The project demonstrates an understanding of C++ functions and control structures.
