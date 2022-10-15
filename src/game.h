@@ -10,11 +10,12 @@
 class Game {
  public:
   Game(std::size_t grid_width, std::size_t grid_height, std::size_t nSnakes);
-  void Run(Controller const &controller1, Controller const &controller2, Renderer &renderer, std::size_t target_frame_duration, int nSnakes);
+  void Run(Controller const &controller1, Controller const &controller2, Renderer &renderer, std::size_t target_frame_duration);
   int GetIndexWinningSnake() const;
   int GetScoreWinningSnake(int index) const;
   int GetSizeWinningSnake(int index) const;
   int CalculateScoreDelta() const;
+
 
  private:
   // create a vector of snakes 
@@ -27,6 +28,7 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   void PlaceFood();
+  void PlaceSnakes(std::size_t nSnakes); 
   void Update();
 };
 
