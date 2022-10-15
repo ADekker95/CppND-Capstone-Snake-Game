@@ -12,17 +12,17 @@ int main() {
   constexpr std::size_t kGridWidth{32};
   constexpr std::size_t kGridHeight{32};
   // unsigned int for number of snakes in game
-  constexpr std::size_t nSnakes = 2;
+  constexpr std::size_t kSnakes{2};
   
   Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
   // we need separate keys to control the snakes
   Controller controller1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
   // wasd is another frequently used set as alternative to arrows
   Controller controller2(SDLK_w, SDLK_a, SDLK_s, SDLK_d);
-  
-  Game game(kGridWidth, kGridHeight, nSnakes);
+ 
+  Game game(kGridWidth, kGridHeight, kSnakes);
   // preferably, I would have used the controller instances in a container, because this is not really scalable if we wanted to have more snakes than 2 but I could not make it work
-  game.Run(controller1, controller2, renderer, kMsPerFrame, nSnakes);
+  game.Run(controller1, controller2, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
   
   // determine winning snake 
