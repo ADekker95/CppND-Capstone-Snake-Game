@@ -19,6 +19,11 @@ void Snake::Update() {
   }
 }
 
+void Snake::SetHead(float x, float y) {
+  head_x = x;
+  head_y = y;
+} 
+
 void Snake::UpdateHead() {
   switch (direction) {
     case Direction::kUp:
