@@ -7,19 +7,19 @@
 #include <thread>
 
 // Game constructor, initialize food and snakes at random places
-Game::Game(std::size_t grid_width, std::size_t grid_height, size_t nSnakes):
-	random_w(0, static_cast<int>(grid_width - 1)),
-    random_h(0, static_cast<int>(grid_height - 1)),
-    engine(dev()) {
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t nSnakes):
+    engine(dev()),
+    random_w(0, static_cast<int>(grid_width - 1)),
+    random_h(0, static_cast<int>(grid_height - 1)) {
   PlaceFood();
-      
-  // initialize snakes for the game, each at random position in grid
-  for (size_t ns = 0; ns < nSnakes; ns++){
-  	snakes.push_back(Snake(grid_width, grid_height, random_w(engine), random_h(engine)));
-  }
+  for (std::size_t ns = 0; ns < nSnakes; ns++){
+  	snakes.push_back(Snake(grid_width, grid_height));
+  }  
+  // Initialize snakes at random position in grid
+  PlaceSnakes(nSnakes);
 }
 
-void Game::Run(Controller const &controller1, Controller const &controller2, Renderer &renderer, std::size_t target_frame_duration, int nSnakes) {
+void Game::Run(Controller const &controller1, Controller const &controller2, Renderer &renderer, std::size_t target_frame_duration) {
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
   Uint32 frame_end;
@@ -37,7 +37,7 @@ void Game::Run(Controller const &controller1, Controller const &controller2, Ren
     std::vector<std::thread> threads;
     
     // we need to use std::ref to pass references to a function launched in a thread 
-    for (size_t i = 0; i < nSnakes; ++i){
+    for (std::vector<Snake>::size_type i = 0; i != snakes.size(); i++){
       if (i == 0){
         // use emplace back instead of push back (would create copy and we do not want that)
         threads.emplace_back(std::thread(&Controller::HandleInput, controller1, std::ref(running), std::ref(snakes[i])));
@@ -85,7 +85,7 @@ void Game::PlaceFood() {
     x = random_w(engine);
     y = random_h(engine);
     // Check that the location is not occupied by a snake item before placing food.
-    for (auto s:snakes) {
+    for (auto &s:snakes) {
       if (!s.SnakeCell(x, y)) {
         food.x = x;
         food.y = y;
@@ -95,6 +95,16 @@ void Game::PlaceFood() {
   }
 }
 
+
+void Game::PlaceSnakes(std::size_t nSnakes) {
+  // initialize snakes for the game, each at random position in grid
+  for (std::size_t i; i<nSnakes; i++){
+    float x = random_w(engine);
+    float y = random_h(engine);    
+  	snakes[i].SetHead(x, y);
+  }  
+}
+
 // Calculate score difference between the two scores
 int Game::CalculateScoreDelta() const {
 	return abs(snakes[0].score - snakes[1].score);
@@ -102,7 +112,7 @@ int Game::CalculateScoreDelta() const {
 
 void Game::Update() {
   // if any of the snakes is dead return
-  for (s:snakes) {
+  for (auto &s:snakes) {
     if (!s.alive) return;
 
     s.Update();
