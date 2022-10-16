@@ -5,19 +5,21 @@ This is repo is built from the starter repo for the Capstone project in the [Uda
 <img src="snake_game.gif"/>
 
 ## Game instructions 
-In this Capstone Project, we play with (two) snakes that battle for food. Currently, the snakes only die if they hit themselves and not each other. One snake is controlled by arrows, the other via w,a,s,d. If one snakes earns two points more than the other or a snake runs into itself, the game ends and the score and size of the winning snake is displayed. 
+In this Capstone Project, we play with two snakes that battle for food. Each piece of food yields one point for the snake that eats it. The user provides the score difference with which one snake wins from the other. If this point difference is reached, the game ends. Alternatively, if the snakes collide with each other or themelves, the game also ends. One snake is controlled by arrows, the other via w,a,s,d. 
 
 ## How 5 rubric points are satisfied:
 1. The project demonstrates an understanding of C++ functions and control structures.
-The repo consists of for loops and if/else statements. 
+The repo consists of for loops (for example, looping over the body elements of the snake) and if/else statements. 
 2. Classes use appropriate access specifiers for class members.
 Each snake has a different set of control keys that directs the snake to go up, down, left or right. These control keys are connected to private variables in the constructor list. 
 3. Class constructors utilize member initialization lists.
-Snakes are initialized with a member initialized list. Each snake is initialized at a random point instead of the middle of the screen. 
+The snakes and game are initialized with a member initialized list. The snakes are initialized at a random point in the grid instead of the middle of the screen. 
 4. The project uses multithreading.
 For each snake, a thread is launched to handle the input. 
 5. Classes encapsulate behavior.
 First, a game would have a score. Now, snakes have a score, so that snake class contains score as an attribute and the game class updates the score of the snakes.
+6. The project accepts user input and processes the input. 
+The user must provide a point difference that determines when one snake wins from the other.
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
