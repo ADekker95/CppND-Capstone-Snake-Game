@@ -2,7 +2,6 @@
 #include "controller.h"
 #include "game.h"
 #include "renderer.h"
-#include <vector>
 
 int main() {
   constexpr std::size_t kFramesPerSecond{60};
@@ -11,24 +10,27 @@ int main() {
   constexpr std::size_t kScreenHeight{640};
   constexpr std::size_t kGridWidth{32};
   constexpr std::size_t kGridHeight{32};
-  // unsigned int for number of snakes in game
-  constexpr std::size_t kSnakes{2};
-  
+  std::size_t allowed_score_delta;
+
   Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
-  // we need separate keys to control the snakes
+  
   Controller controller1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
   // wasd is another frequently used set as alternative to arrows
-  Controller controller2(SDLK_w, SDLK_a, SDLK_s, SDLK_d);
- 
-  Game game(kGridWidth, kGridHeight, kSnakes);
-  // preferably, I would have used the controller instances in a container, because this is not really scalable if we wanted to have more snakes than 2 but I could not make it work
-  game.Run(controller1, controller2, renderer, kMsPerFrame);
-  std::cout << "Game has terminated successfully!\n";
+  Controller controller2(SDLK_w, SDLK_s, SDLK_a, SDLK_d);
   
-  // determine winning snake 
-  int snakeIndex = game.GetIndexWinningSnake();
-  // calculate score and size of winning snake
-  std::cout << "Score: " << game.GetScoreWinningSnake(snakeIndex) << "\n";
-  std::cout << "Size: " << game.GetSizeWinningSnake(snakeIndex) << "\n";
+  std::cout << "Determine the point difference when the snake has won \n ";
+  std::cout << "Type a positive number: ";
+  std::cin >> allowed_score_delta;
+  Game game(kGridWidth, kGridHeight, allowed_score_delta);
+  game.Run(controller1, controller2, renderer, kMsPerFrame);
+  std::cout << "Game has terminated\n";
+  if (game.score_delta > static_cast<int>(allowed_score_delta)){
+    std::cout << "Snake " << game.GetWinningSnake() << " has won! \n";
+    std::cout << "Score of winning snake: " << game.GetScore() << "\n";
+    std::cout << "Size of winning snake: " << game.GetSize() << "\n";
+  }
+  else {
+  	std::cout << "Game ended due to collision!\n";    
+  }
   return 0;
 }
